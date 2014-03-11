@@ -1,7 +1,6 @@
 package org.acaro.dbpedia4neo.inserter;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,6 +16,7 @@ import org.openrdf.sail.SailException;
 
 import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.oupls.sail.GraphSail;
+import java.io.InputStream;
 
 public class DBpediaLoader 
 {
@@ -59,6 +59,27 @@ public class DBpediaLoader
 			}
 			
 		});
-		parser.parse(new BufferedInputStream(new FileInputStream(new File(file))), "http://dbpedia.org/");
-	}
+
+                InputStream stream = openStream(file);
+		parser.parse(stream, "http://dbpedia.org/");
+        }
+        
+        
+        /**
+         * Open input bzipped file
+         * 
+         * @param fileName file to import or `-` to read from stdin
+         * 
+         * @return stream
+         * 
+         * @throws IOException 
+         */
+        protected static InputStream openStream(String fileName) throws IOException {
+            InputStream stream = System.in;
+            if (!"-".equals(fileName)) {//read from stdin if file argument is the `-` symbol
+                stream = new FileInputStream(fileName);
+            }
+            stream = new BufferedInputStream(stream);
+            return stream;
+        }
 }
