@@ -80,6 +80,6 @@ public class DBpediaLoader
                 stream = new FileInputStream(fileName);
             }
             stream = new BufferedInputStream(stream);
-            return stream;
+            return new ProgressInputStream(stream);
         }
 }

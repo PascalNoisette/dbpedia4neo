@@ -8,7 +8,6 @@ import org.openrdf.sail.SailException;
 
 public class TripleHandler implements RDFHandler {
 	private SailConnection sc;
-	private long manager;
 	
 	public TripleHandler(SailConnection sc) { 
 		this.sc = sc;
@@ -29,9 +28,6 @@ public class TripleHandler implements RDFHandler {
 				return;
 			
 			sc.addStatement(arg0.getSubject(), arg0.getPredicate(), arg0.getObject());
-			manager++;
-			if (manager%10000 == 0)
-				System.out.print(".");
 		} catch (SailException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
