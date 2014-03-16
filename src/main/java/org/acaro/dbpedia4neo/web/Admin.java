@@ -35,6 +35,8 @@ public class Admin {
 
         srv.start();
         System.in.read();
-
+        System.out.println("Shutting down...");
+        rawGraph.shutdown();
+        srv.stop();
     }
 }
