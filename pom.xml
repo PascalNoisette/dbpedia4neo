@@ -48,32 +48,20 @@
                  <dependency>
                     <groupId>org.neo4j</groupId>
                     <artifactId>neo4j</artifactId>
-                    <version>1.9.2</version>
+                    <version>2.0.1</version>
                    </dependency>
                    <dependency>
                     <groupId>org.neo4j.app</groupId>
                     <artifactId>neo4j-server</artifactId>
-                    <version>1.9.2</version>
+                    <version>2.0.1</version>
                    </dependency>
                 <dependency>
                     <groupId>org.neo4j.app</groupId>
                     <artifactId>neo4j-server</artifactId>
-                    <version>1.9.2</version>
+                    <version>2.0.1</version>
                     <type>jar</type>
                     <classifier>static-web</classifier>
                     <scope>compile</scope>
                 </dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>neo4j repo</id>
-			<name>neo4j repo</name>
-			<url>http://m2.neo4j.org/snapshots/</url>
-		</repository>
-		<repository>
-			<id>openrdf</id>
-			<name>openrdf</name>
-			<url>http://repo.aduna-software.org/maven2/releases/</url>
-		</repository>
-	</repositories>
 </project>

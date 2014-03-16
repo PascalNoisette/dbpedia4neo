@@ -5,7 +5,8 @@
  */
 package org.acaro.dbpedia4neo.web;
 
-import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.WrappingNeoServerBootstrapper;
 
@@ -16,7 +17,7 @@ import org.neo4j.server.WrappingNeoServerBootstrapper;
 public class Admin {
 
     public static void main(String[] args) throws Exception {
-        final EmbeddedGraphDatabase rawGraph = new EmbeddedGraphDatabase("dbpedia4neo");
+        final GraphDatabaseService rawGraph = new GraphDatabaseFactory().newEmbeddedDatabase("dbpedia4neo");
         final WrappingNeoServerBootstrapper srv = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) rawGraph);
 
         // we need a clean shutdown
