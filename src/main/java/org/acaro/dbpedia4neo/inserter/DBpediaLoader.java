@@ -11,17 +11,17 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.ntriples.NTriplesParser;
 
 import java.io.InputStream;
+import org.acaro.dbpedia4neo.handler.NodeCreator;
+import org.acaro.dbpedia4neo.handler.TripleHandler;
 import org.acaro.dbpedia4neo.inserter.db.BatchGraph;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.rio.RDFHandler;
 
 public class DBpediaLoader {
     
-    public static void main( String[] args ) 
-    	throws RDFParseException, RDFHandlerException, FileNotFoundException, IOException
-    {
+    public void updateNodes(String[] args, NodeCreator nodeCreator) throws RDFParseException, RDFHandlerException, FileNotFoundException, IOException {
         BatchGraph neo = new BatchGraph("dbpedia4neo");
-        TripleHandler tripleHandler = new TripleHandler();
+        TripleHandler tripleHandler = new NodeCreator();
         tripleHandler.setGraph(neo);
         for (String file : args) {
             System.out.println("Loading " + file + ": updateNodes");

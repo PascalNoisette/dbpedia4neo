@@ -1,4 +1,5 @@
-package org.acaro.dbpedia4neo.inserter;
+
+package org.acaro.dbpedia4neo.handler;
 
 import org.acaro.dbpedia4neo.inserter.db.BatchGraph;
 import org.openrdf.model.Statement;
@@ -6,7 +7,7 @@ import org.openrdf.model.URI;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
 
-public class TripleHandler implements RDFHandler {
+abstract public class TripleHandler implements RDFHandler {
 
     protected BatchGraph neo;
 
@@ -35,9 +36,14 @@ public class TripleHandler implements RDFHandler {
                 return;
             }
             String node = ((URI) arg0.getSubject()).getLocalName();
+            String predicate = arg0.getPredicate().getLocalName();
 
             if (arg0.getObject() instanceof URI && !((URI) arg0.getObject()).getLocalName().isEmpty()) {
-                neo.createNode(node);
+                String relatedNodeName = ((URI) arg0.getObject()).getLocalName();
+                handleRelationshipRead(node, predicate, relatedNodeName);
+            } else {
+                String propertyName = arg0.getObject().stringValue();
+                handleNodePropertyRead(node, predicate, propertyName);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,4 +58,8 @@ public class TripleHandler implements RDFHandler {
 
     public void endRDF() throws RDFHandlerException {
     }
+
+    abstract void handleNodePropertyRead(String node, String predicate, String propertyName);
+
+    abstract void handleRelationshipRead(String node, String predicate, String relatedNodeName);
 }
