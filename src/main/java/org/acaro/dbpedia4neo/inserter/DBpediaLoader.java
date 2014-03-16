@@ -19,9 +19,8 @@ import org.openrdf.rio.RDFHandler;
 
 public class DBpediaLoader {
     
-    public void updateNodes(String[] args, NodeCreator nodeCreator) throws RDFParseException, RDFHandlerException, FileNotFoundException, IOException {
+    public void updateNodes(String[] args, TripleHandler tripleHandler) throws RDFParseException, RDFHandlerException, FileNotFoundException, IOException {
         BatchGraph neo = new BatchGraph("dbpedia4neo");
-        TripleHandler tripleHandler = new NodeCreator();
         tripleHandler.setGraph(neo);
         for (String file : args) {
             System.out.println("Loading " + file + ": updateNodes");

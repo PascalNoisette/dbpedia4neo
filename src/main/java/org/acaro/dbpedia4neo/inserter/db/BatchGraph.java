@@ -7,6 +7,7 @@ package org.acaro.dbpedia4neo.inserter.db;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.neo4j.graphdb.RelationshipType;
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.EXACT_CONFIG;
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.FULLTEXT_CONFIG;
 import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
@@ -50,7 +51,7 @@ public class BatchGraph {
         });
         //init the base space
     }
-    
+
     public void shutdown() {
         if (batchDBStarted) {
             System.out.println("Shutting down batch inserter...");
@@ -59,7 +60,14 @@ public class BatchGraph {
             batchDBStarted = false;
         }
     }
-    
+
+    public void addNodeProperty(String nodeName, String predicate, String propertyName) {
+        long id = hash(nodeName);
+        if (graph.nodeExists(id)) {
+            graph.setNodeProperty(id, predicate, propertyName);
+        }
+    }
+
     public long createNode(String nodeName) {
         long id = hash(nodeName);
         if (!graph.nodeExists(id)) {
@@ -67,7 +75,7 @@ public class BatchGraph {
         }
         return id;
     }
-    
+
     private void _createNode(long id, String nodeName) {
         Map<String, Object> properties = new HashMap();
         properties.put("name", nodeName);
@@ -80,7 +88,28 @@ public class BatchGraph {
             System.out.println(nodeCount + " nodes created.");
         }
     }
-    
+
+    public void addRelationship(String nodeName, String predicate, String relatedNodeName) {
+        long id = hash(nodeName);
+        if (graph.nodeExists(id)) {
+            graph.createRelationship(
+                    id,
+                    createNode(relatedNodeName),
+                    getRelationshipType(predicate),
+                    null
+            );
+        }
+    }
+
+    private RelationshipType getRelationshipType(final String context) {
+        return new RelationshipType() {
+            @Override
+            public String name() {
+                return context;
+            }
+        };
+    }
+
     private long hash(String string) {
         int code = string.hashCode();
         if (code < 0) {
