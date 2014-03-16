@@ -69,6 +69,7 @@ public class DBpediaLoader
                 
                 InputStream stream = openStream(file);
 		parser.parse(stream, "http://dbpedia.org/");
+                stream.close();
 	}
         
         /**
