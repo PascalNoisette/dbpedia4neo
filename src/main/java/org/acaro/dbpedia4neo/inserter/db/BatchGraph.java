@@ -27,6 +27,7 @@ public class BatchGraph {
     private final BatchInserterIndex fulltext;
     private final BatchInserterIndex exact;
     private final LuceneBatchInserterIndexProvider indexProvider;
+    public long  NODE_DOES_NOT_EXISTS = -1;
 
     public BatchGraph(String graphName) {
         graph = BatchInserters.inserter(graphName);
@@ -62,24 +63,24 @@ public class BatchGraph {
     }
 
     public void addNodeProperty(String nodeName, String predicate, String propertyName) {
-        long id = hash(nodeName);
-        if (graph.nodeExists(id)) {
-            graph.setNodeProperty(id, predicate, propertyName);
+        long node = getNode(nodeName);
+        if (node != NODE_DOES_NOT_EXISTS) {
+            graph.setNodeProperty(node, predicate, propertyName);
         }
     }
 
     public long createNode(String nodeName) {
-        long id = hash(nodeName);
-        if (!graph.nodeExists(id)) {
-            _createNode(id, nodeName);
+        long node = getNode(nodeName);
+        if (node == NODE_DOES_NOT_EXISTS) {
+            return _createNode(nodeName);
         }
-        return id;
+        return getNode(nodeName);
     }
 
-    private void _createNode(long id, String nodeName) {
+    private long _createNode(String nodeName) {
         Map<String, Object> properties = new HashMap();
         properties.put("name", nodeName);
-        graph.createNode(id, properties);
+        long id = graph.createNode(properties);
 
         fulltext.add(id, properties);
         exact.add(id, properties);
@@ -87,13 +88,14 @@ public class BatchGraph {
         if ((nodeCount++) % 10000 == 0) {
             System.out.println(nodeCount + " nodes created.");
         }
+        return id;
     }
 
     public void addRelationship(String nodeName, String predicate, String relatedNodeName) {
-        long id = hash(nodeName);
-        if (graph.nodeExists(id)) {
+        long node = getNode(nodeName);
+        if (node != NODE_DOES_NOT_EXISTS) {
             graph.createRelationship(
-                    id,
+                    node,
                     createNode(relatedNodeName),
                     getRelationshipType(predicate),
                     null
@@ -110,11 +112,12 @@ public class BatchGraph {
         };
     }
 
-    private long hash(String string) {
-        int code = string.hashCode();
-        if (code < 0) {
-            code = -1 * code;
+    private long getNode(String nodeName) {
+        exact.flush();
+        Long node = exact.get("name", nodeName).getSingle();
+        if (node==null) {
+            return NODE_DOES_NOT_EXISTS;
         }
-        return (long) code;
+        return node;
     }
 }
