@@ -164,5 +164,8 @@ public class BatchGraph {
         return name;
     }
     
-    
+    public void createIndexOnLabel(String name)
+    {
+        graph.createDeferredSchemaIndex(getLabel(name)[0]).on("name").create();
+    }
 }

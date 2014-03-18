@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openrdf.rio.RDFHandlerException;
 
 public class NodeCreator extends TripleHandler  {
 
@@ -27,6 +28,13 @@ public class NodeCreator extends TripleHandler  {
             
         } catch (IOException ex) {
             Logger.getLogger(NodeCreator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void endRDF() throws RDFHandlerException {
+        for (String label : allowedNode.keySet()) {
+            neo.createIndexOnLabel(label);
+            System.out.println(label);
         }
     }
 
