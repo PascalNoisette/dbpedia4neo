@@ -68,7 +68,7 @@ public class BatchGraph {
 
     public void addNodeProperty(String nodeName, String predicate, String propertyName) {
         long node = getNode(nodeName);
-        if (node != NODE_DOES_NOT_EXISTS) {
+        if (node != NODE_DOES_NOT_EXISTS && nodeHasALabel(node)) {
             graph.setNodeProperty(node, predicate, propertyName);
         }
     }
@@ -105,7 +105,7 @@ public class BatchGraph {
 
     public void addRelationship(String nodeName, String predicate, String relatedNodeName) {
         long node = getNode(nodeName);
-        if (node != NODE_DOES_NOT_EXISTS) {
+        if (node != NODE_DOES_NOT_EXISTS && nodeHasALabel(node)) {
             graph.createRelationship(
                     node,
                     createNode(relatedNodeName),
@@ -134,7 +134,7 @@ public class BatchGraph {
     }
     
     
-    private Label[] getLabel(String label) {
+    public Label[] getLabel(String label) {
         if (label == null) {
             return null;
         }
@@ -167,5 +167,13 @@ public class BatchGraph {
     public void createIndexOnLabel(String name)
     {
         graph.createDeferredSchemaIndex(getLabel(name)[0]).on("name").create();
+    }
+
+    private boolean nodeHasALabel(long node) {
+        Iterable<Label> labels = graph.getNodeLabels(node);
+        while (labels.iterator().hasNext()) {
+            return true;
+        }
+        return false;
     }
 }
