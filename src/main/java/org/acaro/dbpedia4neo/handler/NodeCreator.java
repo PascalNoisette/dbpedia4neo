@@ -37,7 +37,7 @@ public class NodeCreator extends TripleHandler  {
     @Override
     void handleRelationshipRead(String node, String predicate, String relatedNodeName) {
         if (allowedNode.containsKey(relatedNodeName) && allowedNode.get(relatedNodeName).equals(predicate)) {
-            neo.createNode(node);
+            neo.createNode(node, relatedNodeName);
         }
     }
 }

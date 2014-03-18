@@ -7,6 +7,8 @@ package org.acaro.dbpedia4neo.inserter.db;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.EXACT_CONFIG;
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.FULLTEXT_CONFIG;
@@ -28,6 +30,7 @@ public class BatchGraph {
     private final BatchInserterIndex exact;
     private final LuceneBatchInserterIndexProvider indexProvider;
     public long  NODE_DOES_NOT_EXISTS = -1;
+    private final Map<String, Label[]> labelList;
 
     public BatchGraph(String graphName) {
         graph = BatchInserters.inserter(graphName);
@@ -35,6 +38,7 @@ public class BatchGraph {
         indexProvider = new LuceneBatchInserterIndexProvider(graph);
         fulltext = indexProvider.nodeIndex("name", FULLTEXT_CONFIG);
         exact = indexProvider.nodeIndex("article", EXACT_CONFIG);
+        labelList = new HashMap<String, Label[]>();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -69,19 +73,27 @@ public class BatchGraph {
         }
     }
 
-    public long createNode(String nodeName) {
+    public long createNode(String nodeName) 
+    {
+        return createNode(nodeName, null);
+    }
+    public long createNode(String nodeName, String label) {
         long node = getNode(nodeName);
         if (node == NODE_DOES_NOT_EXISTS) {
-            return _createNode(nodeName);
+            return _createNode(nodeName, getLabel(label));
         }
         return getNode(nodeName);
     }
 
-    private long _createNode(String nodeName) {
+    private long _createNode(String nodeName, Label[] label) {
         Map<String, Object> properties = new HashMap();
         properties.put("name", nodeName);
-        long id = graph.createNode(properties);
-
+        long id;
+        if (label != null) {
+            id = graph.createNode(properties, label);
+        } else {
+            id = graph.createNode(properties);
+        }
         fulltext.add(id, properties);
         exact.add(id, properties);
 
@@ -120,4 +132,37 @@ public class BatchGraph {
         }
         return node;
     }
+    
+    
+    private Label[] getLabel(String label) {
+        if (label == null) {
+            return null;
+        }
+        if (!labelList.containsKey(label)) {
+            String name = cleanLabelName(label);
+            labelList.put(label, _createLabel(name));
+        }
+        return labelList.get(label);
+    }
+    
+    public Label[] _createLabel(String name) {
+        Label personLabel = DynamicLabel.label(name);
+        Label[] value = new Label[1];
+        value[0] = personLabel;
+        return value;
+    }
+    
+    private String cleanLabelName(String name) {
+        String[] names = name.split(":");
+        if (names.length>=2) {
+            name=names[1];
+        }
+        names = name.split("Infobox_");
+        if (names.length>=2) {
+            name=names[1];
+        }
+        return name;
+    }
+    
+    
 }
