@@ -39,16 +39,27 @@ abstract public class TripleHandler implements RDFHandler {
     protected HashMap<String, String> allowedNode = new HashMap<String, String>();
     HashSet<String> indexableAttribute;
     
+    /**
+     * Initialise allowed node to be created and indexable attribute list
+     */
     TripleHandler ()
     {
         loadAllowedNodes();
         loadIndexableAttribute();
     }
 
+    /**
+     * Assign graph to work on
+     * @param neo  Batch inserter wrapper
+     */
     public void setGraph(BatchGraph neo) {
         this.neo = neo;
     }
     
+    
+    /**
+     * Build allowed node list to be created based on the filter.properties file
+     */
     private void loadAllowedNodes()
     {
         try {
@@ -66,6 +77,9 @@ abstract public class TripleHandler implements RDFHandler {
         }
     }
     
+    /**
+     * Add name to the list of fulltext indexable attribute
+     */
     private void loadIndexableAttribute()
     {
         indexableAttribute = new HashSet<String>();
@@ -110,13 +124,21 @@ abstract public class TripleHandler implements RDFHandler {
         }
     }
 
+    @Override
     public void startRDF() throws RDFHandlerException {
     }
 
+    @Override
     public void endRDF() throws RDFHandlerException {
     }
 
+    /**
+     * Convert a line of RDF file to a node, or a property
+     */
     abstract void handleNodePropertyRead(String node, String predicate, String propertyName);
 
+    /**
+     * Convert a line of RDF file to a relationship
+     */
     abstract void handleRelationshipRead(String node, String predicate, String relatedNodeName);
 }

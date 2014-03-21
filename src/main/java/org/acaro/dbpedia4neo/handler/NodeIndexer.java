@@ -31,14 +31,19 @@ public class NodeIndexer extends TripleHandler {
         indexNodeProperties();
     }
     
-    public void indexNode() throws RDFHandlerException {
+    /**
+     * Add index on uri for each label
+     */
+    public void indexNode() {
         for (String label : allowedNode.keySet()) {
             neo.createIndexOnLabel(label, BatchGraph.INTERNAL_ATTRIBUTE_NAME);
         }
     }
 
-    
-    public void indexNodeProperties() throws RDFHandlerException {
+    /**
+     * Add index on each indexable properties for each label
+     */
+    public void indexNodeProperties() {
         for (String label : allowedNode.keySet()) {
             for (String property : indexableAttribute) {
                 neo.createIndexOnLabel(label, property);
