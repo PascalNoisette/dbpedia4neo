@@ -38,6 +38,17 @@ import org.openrdf.rio.RDFHandler;
  */
 public class DBpediaLoader {
     
+    /**
+     * Run the given parser handler against each file in argument
+     * 
+     * @param args file list
+     * @param tripleHandler parser handler
+     * 
+     * @throws RDFParseException
+     * @throws RDFHandlerException
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     public void updateNodes(String[] args, TripleHandler tripleHandler) throws RDFParseException, RDFHandlerException, FileNotFoundException, IOException {
         BatchGraph neo = new BatchGraph("dbpedia4neo");
         tripleHandler.setGraph(neo);
@@ -49,6 +60,17 @@ public class DBpediaLoader {
         neo.shutdown();
     }
 
+    /**
+     * Run the given parser handler against a file
+     * 
+     * @param file
+     * @param handler
+     * 
+     * @throws RDFParseException
+     * @throws RDFHandlerException
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     private static void loadFile(final String file, RDFHandler handler) throws RDFParseException, RDFHandlerException, FileNotFoundException, IOException {
         NTriplesParser parser = new NTriplesParser(new ValueFactoryImpl());
         parser.setRDFHandler(handler);
