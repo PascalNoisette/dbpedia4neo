@@ -3,7 +3,7 @@ Import dbpedia dump into neo4j.
 The required input files are downloadable at http://downloads.dbpedia.org/3.9/en/
 
 Please setup an appropriate filter in the resource file "filter.properties" first, 
-unless you are interested in Egyptian pharaoh! The filtering restrict the amount 
+unless you are interested in Egyptian pharaohs! The filtering restrict the amount 
 of node created.
 
 Dbpedia input file such as "article_templates_en.nt", contains triple matching 
@@ -18,10 +18,7 @@ article_categories_en.nt to initialise a set of node.
 Then add properties and relationship to them by running 
 `org.acaro.dbpedia4neo.inserter.Updater` with "mappingbased_properties_cleaned_en.nt".
 
-These import step require quite some time (~5 and 20 minutes respectively for me) 
-to import the two 3Go uncompressed input file. Since node creation is based on 
-custom uids, neo4j will start by allocating a lot of disk space (18Go for the 
-default supplied filter) and there will not be an accurate estimation of the 
-amount of node in the graph available.
+These import step require quite some time (~10 and 30 minutes respectively for me) 
+to import the two 3Go uncompressed input file.
 
 Have a look at the graph created with org.acaro.dbpedia4neo.web.Admin.
