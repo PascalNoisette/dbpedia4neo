@@ -84,6 +84,7 @@ abstract public class TripleHandler implements RDFHandler {
     {
         indexableAttribute = new HashSet<String>();
         indexableAttribute.add("name");
+        indexableAttribute.add("label");
     }
 
     @Override
