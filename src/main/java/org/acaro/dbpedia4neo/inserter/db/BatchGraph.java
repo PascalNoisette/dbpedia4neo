@@ -131,6 +131,9 @@ public class BatchGraph {
     public void addNodeProperty(String nodeName, String propertyName, String propertyValue, boolean toIndex) {
         long node = getNode(nodeName);
         if (node != NODE_DOES_NOT_EXISTS && nodeHasALabel(node)) {
+            if (graph.nodeHasProperty(node, propertyName)) {
+                return;
+            }
             graph.setNodeProperty(node, propertyName, propertyValue);
             if (toIndex) {
                 fulltext.add(node, MapUtil.map(propertyName, propertyValue));
