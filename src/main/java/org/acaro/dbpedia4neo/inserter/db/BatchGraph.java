@@ -10,6 +10,7 @@ import java.util.Map;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.helpers.collection.MapUtil;
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.EXACT_CONFIG;
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.FULLTEXT_CONFIG;
 import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
@@ -30,14 +31,15 @@ public class BatchGraph {
     private final BatchInserterIndex exact;
     private final LuceneBatchInserterIndexProvider indexProvider;
     public long  NODE_DOES_NOT_EXISTS = -1;
+    public static String INTERNAL_ATTRIBUTE_NAME = "uri";
     private final Map<String, Label[]> labelList;
 
     public BatchGraph(String graphName) {
         graph = BatchInserters.inserter(graphName);
         batchDBStarted = true;
         indexProvider = new LuceneBatchInserterIndexProvider(graph);
-        fulltext = indexProvider.nodeIndex("name", FULLTEXT_CONFIG);
-        exact = indexProvider.nodeIndex("article", EXACT_CONFIG);
+        fulltext = indexProvider.nodeIndex("fulltext", FULLTEXT_CONFIG);
+        exact = indexProvider.nodeIndex(INTERNAL_ATTRIBUTE_NAME, EXACT_CONFIG);
         labelList = new HashMap<String, Label[]>();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -66,10 +68,13 @@ public class BatchGraph {
         }
     }
 
-    public void addNodeProperty(String nodeName, String predicate, String propertyName) {
+    public void addNodeProperty(String nodeName, String predicate, String propertyName, boolean toIndex) {
         long node = getNode(nodeName);
         if (node != NODE_DOES_NOT_EXISTS && nodeHasALabel(node)) {
             graph.setNodeProperty(node, predicate, propertyName);
+            if (toIndex) {
+                fulltext.add(node, MapUtil.map(predicate, propertyName));
+            }
         }
     }
 
@@ -87,14 +92,13 @@ public class BatchGraph {
 
     private long _createNode(String nodeName, Label[] label) {
         Map<String, Object> properties = new HashMap();
-        properties.put("name", nodeName);
+        properties.put(INTERNAL_ATTRIBUTE_NAME, nodeName);
         long id;
         if (label != null) {
             id = graph.createNode(properties, label);
         } else {
             id = graph.createNode(properties);
         }
-        fulltext.add(id, properties);
         exact.add(id, properties);
 
         if ((nodeCount++) % 10000 == 0) {
@@ -126,7 +130,7 @@ public class BatchGraph {
 
     private long getNode(String nodeName) {
         exact.flush();
-        Long node = exact.get("name", nodeName).getSingle();
+        Long node = exact.get(INTERNAL_ATTRIBUTE_NAME, nodeName).getSingle();
         if (node==null) {
             return NODE_DOES_NOT_EXISTS;
         }
@@ -164,9 +168,9 @@ public class BatchGraph {
         return name;
     }
     
-    public void createIndexOnLabel(String name)
+    public void createIndexOnLabel(String labelName, String propertyName)
     {
-        graph.createDeferredSchemaIndex(getLabel(name)[0]).on("name").create();
+        graph.createDeferredSchemaIndex(getLabel(labelName)[0]).on(propertyName).create();
     }
 
     private boolean nodeHasALabel(long node) {

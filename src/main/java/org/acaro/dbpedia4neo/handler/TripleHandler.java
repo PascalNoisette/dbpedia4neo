@@ -1,6 +1,13 @@
 
 package org.acaro.dbpedia4neo.handler;
 
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.acaro.dbpedia4neo.inserter.db.BatchGraph;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -10,9 +17,40 @@ import org.openrdf.rio.RDFHandlerException;
 abstract public class TripleHandler implements RDFHandler {
 
     protected BatchGraph neo;
+    protected HashMap<String, String> allowedNode = new HashMap<String, String>();
+    HashSet<String> indexableAttribute;
+    
+    TripleHandler ()
+    {
+        loadAllowedNodes();
+        loadIndexableAttribute();
+    }
 
     public void setGraph(BatchGraph neo) {
         this.neo = neo;
+    }
+    
+    private void loadAllowedNodes()
+    {
+        try {
+            Properties prop = new Properties();
+            prop.load(TripleHandler.class.getClassLoader().getResourceAsStream("filter.properties"));
+            Enumeration enuKeys = prop.keys();
+            while (enuKeys.hasMoreElements()) {
+                    String key = (String) enuKeys.nextElement();
+                    String value = prop.getProperty(key);
+                    allowedNode.put(key, value);
+            }
+            
+        } catch (IOException ex) {
+            Logger.getLogger(NodeCreator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadIndexableAttribute()
+    {
+        indexableAttribute = new HashSet<String>();
+        indexableAttribute.add("name");
     }
 
     @Override

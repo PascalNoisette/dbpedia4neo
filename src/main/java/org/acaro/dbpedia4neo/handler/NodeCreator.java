@@ -2,41 +2,8 @@
 
 package org.acaro.dbpedia4neo.handler;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openrdf.rio.RDFHandlerException;
 
 public class NodeCreator extends TripleHandler  {
-
-    private final HashMap<String, String> allowedNode = new HashMap<String, String>();
-    
-    public NodeCreator()
-    {
-        try {
-            Properties prop = new Properties();
-            prop.load(NodeCreator.class.getClassLoader().getResourceAsStream("filter.properties"));
-            Enumeration enuKeys = prop.keys();
-            while (enuKeys.hasMoreElements()) {
-                    String key = (String) enuKeys.nextElement();
-                    String value = prop.getProperty(key);
-                    allowedNode.put(key, value);
-            }
-            
-        } catch (IOException ex) {
-            Logger.getLogger(NodeCreator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void endRDF() throws RDFHandlerException {
-        for (String label : allowedNode.keySet()) {
-            neo.createIndexOnLabel(label);
-            System.out.println(label);
-        }
-    }
 
     @Override
     void handleNodePropertyRead(String node, String predicate, String propertyName) {
