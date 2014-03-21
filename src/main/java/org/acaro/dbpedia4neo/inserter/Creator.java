@@ -24,8 +24,7 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 
 /**
- *
- * @author Pascal
+ * Main class to launch node creation
  */
 public class Creator {
 

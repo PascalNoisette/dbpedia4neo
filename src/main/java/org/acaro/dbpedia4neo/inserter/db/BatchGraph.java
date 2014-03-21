@@ -31,8 +31,7 @@ import org.neo4j.unsafe.batchinsert.BatchInserterIndex;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 
 /**
- *
- * @author Pascal
+ * Wrapper for BatchInserter
  */
 public class BatchGraph {
 

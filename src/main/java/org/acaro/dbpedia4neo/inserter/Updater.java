@@ -24,8 +24,7 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 
 /**
- *
- * @author Pascal
+ * Main class to launch relationship and properties creation
  */
 public class Updater {
 

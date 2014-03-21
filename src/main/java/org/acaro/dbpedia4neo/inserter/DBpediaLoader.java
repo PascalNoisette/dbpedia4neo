@@ -33,6 +33,9 @@ import org.acaro.dbpedia4neo.inserter.db.BatchGraph;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.rio.RDFHandler;
 
+/**
+ * Run any given parser handler against the input file
+ */
 public class DBpediaLoader {
     
     public void updateNodes(String[] args, TripleHandler tripleHandler) throws RDFParseException, RDFHandlerException, FileNotFoundException, IOException {

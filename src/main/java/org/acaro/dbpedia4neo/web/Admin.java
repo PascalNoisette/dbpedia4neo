@@ -23,8 +23,7 @@ import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.WrappingNeoServerBootstrapper;
 
 /**
- *
- * @author Pascal
+ * Main class to launch built in neo4j web admin
  */
 public class Admin {
 

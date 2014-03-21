@@ -19,6 +19,9 @@ package org.acaro.dbpedia4neo.handler;
 
 import org.openrdf.rio.RDFHandler;
 
+/**
+ * Parser handler to create relationship and add properties to existing nodes
+ */
 public class NodeUpdater extends TripleHandler implements RDFHandler {
     
     @Override

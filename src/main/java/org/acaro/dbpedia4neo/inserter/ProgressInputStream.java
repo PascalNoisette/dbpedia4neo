@@ -21,8 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- *
- * @author Pascal
+ * Stream wrapper to display progress
  */
 public class ProgressInputStream extends InputStream {
 

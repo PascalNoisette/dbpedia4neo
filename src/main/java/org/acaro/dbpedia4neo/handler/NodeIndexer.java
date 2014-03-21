@@ -21,8 +21,7 @@ import org.acaro.dbpedia4neo.inserter.db.BatchGraph;
 import org.openrdf.rio.RDFHandlerException;
 
 /**
- *
- * @author Pascal
+ * Parser handler to create index on existing node label
  */
 public class NodeIndexer extends TripleHandler {
 

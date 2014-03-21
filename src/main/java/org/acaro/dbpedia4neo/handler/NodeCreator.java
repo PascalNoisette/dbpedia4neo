@@ -17,7 +17,9 @@
  */
 package org.acaro.dbpedia4neo.handler;
 
-
+/**
+ * Parser handler to create node
+ */
 public class NodeCreator extends TripleHandler  {
 
     @Override

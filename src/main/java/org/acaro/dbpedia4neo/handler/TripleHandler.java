@@ -30,6 +30,9 @@ import org.openrdf.model.URI;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
 
+/**
+ * Parser handler abstract
+ */
 abstract public class TripleHandler implements RDFHandler {
 
     protected BatchGraph neo;
